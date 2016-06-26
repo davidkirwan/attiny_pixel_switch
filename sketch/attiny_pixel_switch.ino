@@ -13,7 +13,7 @@
 #define BTN_PIN 0
 #define BTN_DELAY 250
 #define NUM_PATTERNS 10
-#define CTR_THRESH 2
+#define CTR_THRESH 16
 
 // Init Vars
 uint8_t j = 0;
@@ -33,32 +33,25 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, DATA_PIN, NEO_GRB + NEO_KH
 void setup() {
     pinMode(BTN_PIN, INPUT);     
     strip.begin();
-    strip.setPixelColor(0, strip.Color(random(255), random(255), random(255)));
     strip.show(); // Initialize all pixels to 'off'
 }
 
 void loop() {
     // if button pressed, advance, set mark
-    //chkBtn(digitalRead(BTN_PIN));
+    chkBtn(digitalRead(BTN_PIN));
    
     // if pattern greater than #pattern reset
-    //if (pattern > NUM_PATTERNS) { pattern = 1; }
+    if (pattern > NUM_PATTERNS) { pattern = 1; }
     
     // choose a pattern
-    //pickPattern(pattern);
+    pickPattern(pattern);
 
     // set direction
-    //if (direction == 1) { j++;  } else {  j--; }
+    if (direction == 1) { j++;  } else {  j--; }
 
-    //if (j > 254) { direction = 0; }
-    //if (j < 1) { direction = 1; }
-
-    if (digitalRead(BTN_PIN) == HIGH) {
-      strip.setPixelColor(0, strip.Color(random(255), random(255), random(255)));
-      strip.show();
-    }
-
-    delay(BTN_DELAY);
+    if (j > 254) { direction = 0; }
+    if (j < 1) { direction = 1; }   
+	
 }
 
 /* pick a pattern */
@@ -122,7 +115,7 @@ boolean chkBtn(int buttonState) {
    if (buttonState == HIGH && (millis() - mark) > BTN_DELAY) {
        j = 0;
        mark = millis();
-       //pattern++;
+       pattern++;
        return true;
     } 
     else { return false; }
@@ -144,7 +137,7 @@ void colorFirefly(int wait) {
         } else {
           myPix=random(0,strip.numPixels());
         }
-  
+	
 }
 
 // Fill the dots one after the other with a color
@@ -152,7 +145,7 @@ void colorFirefly(int wait) {
 
 void colorWipe(uint32_t c, uint8_t wait) {
   for(uint16_t i=0; i<strip.numPixels(); i++) {
-      //if(chkBtn(digitalRead(BTN_PIN))) { break; }
+      if(chkBtn(digitalRead(BTN_PIN))) { break; }
       strip.setPixelColor(i, c);
       strip.show();
       delay(wait);
@@ -269,14 +262,14 @@ void fadeEveOdd(int c1,byte rem,uint8_t wait) {
 
 // twinkle random number of pixels
 void twinkleRand(int num,uint32_t c,uint32_t bg,int wait) {
-  // set background
-   colorFast(bg,0);
-   // for each num
-   for (int i=0; i<num; i++) {
-     strip.setPixelColor(random(strip.numPixels()),c);
-   }
-  strip.show();
-  delay(wait);
+	// set background
+	 colorFast(bg,0);
+	 // for each num
+	 for (int i=0; i<num; i++) {
+	   strip.setPixelColor(random(strip.numPixels()),c);
+	 }
+	strip.show();
+	delay(wait);
 }
 
 // sine wave, low (0-359),high (0-359), rate of change, wait
@@ -373,5 +366,3 @@ void HSVtoRGB(int hue, int sat, int val, uint8_t * colors) {
 
     }
 }
-
-
